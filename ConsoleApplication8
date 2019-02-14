@@ -1,17 +1,34 @@
 #include <iostream>
+#include <string>
 #include <boost/filesystem.hpp>
 using namespace std;
 using namespace boost::filesystem;
 
+string getFileName(const string& s) {
+
+	char sep = '/';
+
+#ifdef _WIN32
+	sep = '\\';
+#endif
+
+	size_t i = s.rfind(sep, s.length());
+	if (i != string::npos) {
+		return(s.substr(i + 1, s.length() - i));
+	}
+
+	return("");
+}
+
 int main(int argc, char* argv[])
 {
-	if (argc < 2)
+	if (argc < 3)
 	{
 		cout << "Usage: tut3 path\n";
 		return 1;
 	}
 
-	path p(argv[1]);
+	path p(argv[2]);
 	try
 	{
 		if (exists(p))
@@ -24,8 +41,8 @@ int main(int argc, char* argv[])
 				cout << p << " is a directory containing:\n";
 
 				for (directory_entry& x : recursive_directory_iterator(p)) {
-					if (x.filename().string().find("vc141") != string::npos) {
-						cout << "kayn " << x.path() << endl;
+					if (getFileName(x.path().string()).find(argv[1]) != string::npos) {
+						cout << "There is " << x.path() << endl;
 					}
 
 				}
