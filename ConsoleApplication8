@@ -4,22 +4,6 @@
 using namespace std;
 using namespace boost::filesystem;
 
-string getFileName(const string& s) {
-
-	char sep = '/';
-
-#ifdef _WIN32
-	sep = '\\';
-#endif
-
-	size_t i = s.rfind(sep, s.length());
-	if (i != string::npos) {
-		return(s.substr(i + 1, s.length() - i));
-	}
-
-	return("");
-}
-
 int main(int argc, char* argv[])
 {
 	if (argc < 3)
@@ -29,6 +13,7 @@ int main(int argc, char* argv[])
 	}
 
 	path p(argv[2]);
+	cout << p.filename().string() << endl;
 	try
 	{
 		if (exists(p))
@@ -39,12 +24,10 @@ int main(int argc, char* argv[])
 			else if (is_directory(p))
 			{
 				cout << p << " is a directory containing:\n";
-
-				for (directory_entry& x : recursive_directory_iterator(p)) {
-					if (getFileName(x.path().string()).find(argv[1]) != string::npos) {
+				for (auto x : recursive_directory_iterator(p)) {
+					if (x.path().filename() == argv[1]) {
 						cout << "There is " << x.path() << endl;
 					}
-
 				}
 			}
 			else
